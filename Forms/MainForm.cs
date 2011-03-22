@@ -474,7 +474,7 @@ namespace MoMA
 			AssemblyListView.EndUpdate ();
 		}
 		
-		private void ScanForAssemblies (string path)
+		internal void ScanForAssemblies (string path)
 		{
 			foreach (string file in Directory.GetFiles (path, "*.dll"))
 				AddAssembly (file);

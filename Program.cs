@@ -25,6 +25,7 @@
 
 using System;
 using System.Windows.Forms;
+using System.IO;
 
 namespace MoMA
 {
@@ -62,8 +63,7 @@ namespace MoMA
 							Console.WriteLine ("Unknown argument: {0}", arg);
 							return 1;
 						}
-						
-						form.AddAssembly (arg);
+						AddAssemblies (form, arg);						
 						break;
 				}
 			}
@@ -74,6 +74,22 @@ namespace MoMA
 				form.AnalyzeNoGui ();
 
 			return 0;
+		}
+		
+		private static void AddAssemblies (MainForm form, string arg)
+		{
+			try {				
+				FileAttributes att = File.GetAttributes (arg);
+				if ((att & FileAttributes.Directory) == FileAttributes.Directory) {
+					form.ScanForAssemblies (arg);
+				}
+				else {
+					form.AddAssembly (arg);
+				}
+			}
+			catch (Exception ex) {
+				Console.WriteLine (ex.ToString ());
+			}
 		}
 	}
 }
