@@ -58,6 +58,11 @@ namespace MoMA
 						form.ReportFileName = nextArg;
 						i++;
 						break;
+					case "--xml":
+					case "-xml":
+						form.SubmitFileName = nextArg;						
+						i++;
+						break;
 					default:
 						if (arg.StartsWith ("-")) {
 							Console.WriteLine ("Unknown argument: {0}", arg);
