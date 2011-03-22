@@ -48,6 +48,10 @@ namespace MoMA
 				string nextArg = (i + 1 < args.Length) ? args[i + 1] : null;
 
 				switch (arg.ToLower ()) {
+					case "--help":
+					case "-help":
+						ShowHelp ();
+						return 0;
 					case "--nogui":
 					case "-nogui":
 						nogui = true;
@@ -117,6 +121,25 @@ namespace MoMA
 		{
 			string path = Path.GetDirectoryName (nextArg);
 			return (path != "");
+		}
+		private static void ShowHelp ()
+		{
+			Console.WriteLine (
+				"MoMA.exe [options] [inputfiles|inputFilePath]" + Environment.NewLine + Environment.NewLine +
+				"Options:" + Environment.NewLine + Environment.NewLine +
+				"  --help:" + Environment.NewLine +
+				"   -help: Show this help message." + Environment.NewLine + Environment.NewLine +
+				" --nogui:" + Environment.NewLine +
+				"  -nogui: Run application without GUI." + Environment.NewLine + Environment.NewLine +
+				"--ignore:" + Environment.NewLine +
+				" -ignore: Comma separated list of Assemblies to ignore" + Environment.NewLine + Environment.NewLine +
+				"   --out:" + Environment.NewLine +
+				"    -out: HTML report filename" + Environment.NewLine + Environment.NewLine +
+				"   --xml:" + Environment.NewLine +
+				"    -xml: XML report filename" + Environment.NewLine + Environment.NewLine +
+				"Sample:" + Environment.NewLine +
+				"\tMoMA.exe " + @"-nogui -xml ./foobar.xml -out ./boing/out.html C:\MyApplication\bin\Debug -ignore WPF-tainted.dll"
+				);
 		}
 	}
 }
