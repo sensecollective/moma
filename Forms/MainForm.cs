@@ -98,7 +98,7 @@ namespace MoMA
 			}
 		}
 
-		public void AnalyzeNoGui ()
+		public int AnalyzeNoGui ()
 		{
 			RemoveIgnoredAssemblies();
 			string msg = VerifyValidAssemblies ();
@@ -107,9 +107,17 @@ namespace MoMA
 				Console.WriteLine (msg);
 				
 			async_definitions = (FileDefinition)MonoVersionCombo.SelectedItem;
+			if (async_definitions == null){
+				return 1;
+			}
 			async_assemblies = (ListViewItem[])new ArrayList (AssemblyListView.Items).ToArray (typeof (ListViewItem));
 
 			ScanningCompletedEventArgs e = AnalyzeAssemblies ();
+			int totalIssues = e.MissingMethodTotal + e.MonoTodoTotal + e.NotImplementedExceptionTotal + e.PInvokeTotal;
+			if (totalIssues > 0)				
+				return 1;			
+			else
+				return 0;
 		}
 		#endregion
 		

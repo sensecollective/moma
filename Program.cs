@@ -78,12 +78,13 @@ namespace MoMA
 				}
 			}
 
-			if (!nogui)
+			if (!nogui){
 				Application.Run (form);
-			else
-				form.AnalyzeNoGui ();
-
-			return 0;
+				return 0;
+			}
+			else{
+				return form.AnalyzeNoGui ();				
+			}			
 		}
 		
 		private static void AddAssemblies (MainForm form, string arg)
