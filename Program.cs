@@ -52,6 +52,11 @@ namespace MoMA
 					case "-nogui":
 						nogui = true;
 						break;
+					case "--ignore":
+					case "-ignore":
+						form.AssembliesToIgnore = nextArg;
+						i++;
+						break;
 					case "--out":
 					case "-out":
 						// if !full path, use report dir

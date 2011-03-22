@@ -47,7 +47,7 @@ namespace MoMA
 		
 		private FileDefinition async_definitions;
 		private ListViewItem[] async_assemblies;
-		
+
 		public MainForm ()
 		{
 			InitializeComponent ();
@@ -82,6 +82,9 @@ namespace MoMA
 			}
 			set { submit_filename = value; }
 		}
+		public string AssembliesToIgnore{
+			get; set;
+		}
 		#endregion
 
 		#region Public Methods
@@ -97,6 +100,7 @@ namespace MoMA
 
 		public void AnalyzeNoGui ()
 		{
+			RemoveIgnoredAssemblies();
 			string msg = VerifyValidAssemblies ();
 			
 			if (!string.IsNullOrEmpty (msg))
@@ -498,6 +502,29 @@ namespace MoMA
 		private void GettingStartedButton_Click (object sender, EventArgs e)
 		{
 			System.Diagnostics.Process.Start ("http://www.mono-project.com/Start");
+		}
+		private void RemoveIgnoredAssemblies()
+		{
+
+			String[] ignored = AssembliesToIgnore.Split(',');
+			List<ListViewItem> toRemove = new List<ListViewItem>();
+
+			foreach (ListViewItem item in AssemblyListView.Items)
+			{
+				foreach (string str in ignored)
+				{
+					if (Path.GetFileName((string)item.Tag) == str.Trim())
+					{
+						toRemove.Add(item);
+					}
+				}
+			}
+			foreach (ListViewItem lvr in toRemove)
+			{
+				Console.WriteLine(lvr.Tag + " will not be scanned for Mono compatibility.");
+				AssemblyListView.Items.Remove(lvr);
+			}
+
 		}
 		#endregion
 
