@@ -93,7 +93,7 @@ namespace MoMA
 			if (!ListContainsAssembly (Path.GetFileName (path))) {
 				ListViewItem lvi = new ListViewItem (Path.GetFileName (path));
 				lvi.Tag = path;
-
+				Console.WriteLine(path + " added to assembly list.");
 				AssemblyListView.Items.Add (lvi);
 			}
 		}
@@ -108,16 +108,21 @@ namespace MoMA
 				
 			async_definitions = (FileDefinition)MonoVersionCombo.SelectedItem;
 			if (async_definitions == null){
+				Console.WriteLine("No language definition file found! Please run the GUI-version "+
+								  "to download the latest definition files.");
 				return 1;
 			}
 			async_assemblies = (ListViewItem[])new ArrayList (AssemblyListView.Items).ToArray (typeof (ListViewItem));
 
 			ScanningCompletedEventArgs e = AnalyzeAssemblies ();
 			int totalIssues = e.MissingMethodTotal + e.MonoTodoTotal + e.NotImplementedExceptionTotal + e.PInvokeTotal;
-			if (totalIssues > 0)				
+			if (totalIssues > 0){
+				Console.WriteLine(e.MissingMethodTotal+" Missing, "+ e.MonoTodoTotal+" ToDo, " + e.NotImplementedExceptionTotal+" NotImplemented, "+e.PInvokeTotal+" PInvoke ");
 				return 1;			
-			else
+			}
+			else{
 				return 0;
+			}
 		}
 		#endregion
 		

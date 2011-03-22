@@ -24,8 +24,8 @@
 //
 
 using System;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
 
 namespace MoMA
 {
@@ -60,12 +60,22 @@ namespace MoMA
 					case "--out":
 					case "-out":
 						// if !full path, use report dir
-						form.ReportFileName = nextArg;
+						if (CheckPath (nextArg)) {
+							form.ReportFileName = nextArg;
+						}
+						else {
+							Console.WriteLine ("Need path definition for '-out', try '-out .\\" + nextArg + "' to use current directory.");
+						}
 						i++;
 						break;
 					case "--xml":
 					case "-xml":
-						form.SubmitFileName = nextArg;						
+						if (CheckPath (nextArg)) {
+							form.SubmitFileName = nextArg;
+						}
+						else {
+							Console.WriteLine ("Need path definition for '-xml', try '-xml .\\" + nextArg + "' to use current directory.");
+						}						
 						i++;
 						break;
 					default:
@@ -92,6 +102,7 @@ namespace MoMA
 			try {				
 				FileAttributes att = File.GetAttributes (arg);
 				if ((att & FileAttributes.Directory) == FileAttributes.Directory) {
+					Console.WriteLine ("Searching for assemblies in: " + arg);
 					form.ScanForAssemblies (arg);
 				}
 				else {
@@ -101,6 +112,11 @@ namespace MoMA
 			catch (Exception ex) {
 				Console.WriteLine (ex.ToString ());
 			}
+		}
+		private static bool CheckPath (string nextArg)
+		{
+			string path = Path.GetDirectoryName (nextArg);
+			return (path != "");
 		}
 	}
 }
