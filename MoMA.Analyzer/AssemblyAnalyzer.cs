@@ -122,23 +122,8 @@ namespace MoMA.Analyzer
 		public string AssemblyRuntime {
 			get { return assembly_runtime; }
 			set {
-				switch (value) {
-					case "NET_1_0":
-						assembly_runtime = "1.0";
-						break;
-					case "NET_1_1":
-						assembly_runtime = "1.1";
-						break;
-					case "NET_2_0":
-						assembly_runtime = "2.0";
-						break;
-					case "NET_4_0":
-						assembly_runtime = "4.0";
-						break;
-					default:
-						assembly_runtime = value;
-						break;
-				}
+				//Net_4_0 -> 4.0
+				assembly_runtime = value.ToLower().Replace("net_", "").Replace("_",".");							
 			}
 		}
 		
