@@ -13,7 +13,7 @@ namespace MoMAExtractor
 		private static bool use_30 = false;	// Include the 3.0 framework
 		private static bool use_35 = false;	// Include the 3.5 framework
 		private static bool use_40 = true;	// Include the 4.0 framework
-		private static bool use_mobile = false;
+		private static bool use_mobile = true;
 		
 		private static bool use_design = false;	// Include *Design namespaces
 		private static bool mwf_only = false;	// Only do System.Windows.Forms (overrides others)
