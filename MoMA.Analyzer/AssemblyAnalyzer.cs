@@ -132,6 +132,9 @@ namespace MoMA.Analyzer
 					case "NET_2_0":
 						assembly_runtime = "2.0";
 						break;
+					case "NET_4_0":
+						assembly_runtime = "4.0";
+						break;
 					default:
 						assembly_runtime = value;
 						break;
@@ -215,7 +218,7 @@ namespace MoMA.Analyzer
 		public static bool IsValidAssembly (string assembly)
 		{
 			try {
-				AssemblyFactory.GetAssembly (assembly);
+				AssemblyDefinition.ReadAssembly(assembly);
 				return true;
 			} catch {
 				return false;
@@ -254,10 +257,10 @@ namespace MoMA.Analyzer
 		
 		private void AnalyzeAssembly (string assembly)
 		{
-			AssemblyDefinition ad = AssemblyFactory.GetAssembly (assembly);
+			AssemblyDefinition ad = AssemblyDefinition.ReadAssembly(assembly);
 
 			assembly_version = ad.Name.Version;
-			AssemblyRuntime = ad.Runtime.ToString ();
+			AssemblyRuntime = ad.MainModule.Runtime.ToString ();
 			assembly_name = Path.GetFileName (assembly);
 
 			foreach (TypeDefinition type in ad.MainModule.Types) {
@@ -277,29 +280,6 @@ namespace MoMA.Analyzer
 
 									if (pinvoke.Matches (i.Operand.ToString (), out match))
 										pinvoke_results.Add (new MomaError (new Method (method.ToString (), method), match));
-
-									if (missing.Matches (i.Operand.ToString (), out match))
-										missing_results.Add (new MomaError (new Method (method.ToString ()), match));
-								}
-							}
-						}
-					}
-
-					// Check every constructor for calls that match our issues lists
-					foreach (MethodDefinition method in type.Constructors) {
-						if (method.Body != null) {
-							foreach (Instruction i in method.Body.Instructions) {
-								if (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Calli || i.OpCode == OpCodes.Ldftn || i.OpCode == OpCodes.Ldvirtftn || i.OpCode == OpCodes.Newobj || i.OpCode == OpCodes.Initobj) {
-									Method match;
-
-									if (mono_todo != null && mono_todo.Matches (i.Operand.ToString (), out match))
-										mono_todo_results.Add (new MomaError (new Method (method.ToString ()), match));
-
-									if (not_implemented != null && not_implemented.Matches (i.Operand.ToString (), out match))
-										not_implemented_results.Add (new MomaError (new Method (method.ToString ()), match));
-
-									if (pinvoke.Matches (i.Operand.ToString (), out match))
-										pinvoke_results.Add (new MomaError (new Method (method.ToString ()), match));
 
 									if (missing.Matches (i.Operand.ToString (), out match))
 										missing_results.Add (new MomaError (new Method (method.ToString ()), match));

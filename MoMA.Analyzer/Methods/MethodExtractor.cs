@@ -35,7 +35,7 @@ namespace MoMA.Analyzer
 		// Leave any of the SortedList parameters null that you aren't interested in
 		public static void ExtractFromAssembly (string assembly, SortedList<string, Method> allMethods, SortedList<string, Method> throwsNotImplementedMethods, SortedList<string, Method> monoTodoMethods)
 		{
-			AssemblyDefinition ad = AssemblyFactory.GetAssembly (assembly);
+			AssemblyDefinition ad = AssemblyDefinition.ReadAssembly(assembly);
 			
 			//Gets all types of the MainModule of the assembly
 			foreach (TypeDefinition type in ad.MainModule.Types) {
@@ -51,9 +51,9 @@ namespace MoMA.Analyzer
 							foreach (CustomAttribute ca in property.CustomAttributes) {
 								if (IsReportableMonoTODO (ca.Constructor.DeclaringType.ToString ())) {
 									if (property.GetMethod != null && IsMethodVisible (property.GetMethod))
-										monoTodoMethods[property.GetMethod.ToString ()] = new Method (property.GetMethod.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
+										monoTodoMethods[property.GetMethod.ToString ()] = new Method (property.GetMethod.ToString (), ca.ConstructorArguments.Count > 0 ? ca.ConstructorArguments[0].ToString ().Replace ('\n', ' ') : string.Empty);
 									if (property.SetMethod != null && IsMethodVisible (property.SetMethod))
-										monoTodoMethods[property.SetMethod.ToString ()] = new Method (property.SetMethod.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
+										monoTodoMethods[property.SetMethod.ToString ()] = new Method (property.SetMethod.ToString (), ca.ConstructorArguments.Count > 0 ? ca.ConstructorArguments[0].ToString ().Replace ('\n', ' ') : string.Empty);
 								}
 							}
 						}
@@ -72,28 +72,7 @@ namespace MoMA.Analyzer
 						if (monoTodoMethods != null)
 							foreach (CustomAttribute ca in method.CustomAttributes)
 								if (IsReportableMonoTODO (ca.Constructor.DeclaringType.ToString ()))
-									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
-
-						// If adding methods that throw NotImplementedException, look for those
-						if (throwsNotImplementedMethods != null && ThrowsNotImplementedException (method))
-							throwsNotImplementedMethods[method.ToString ()] = new Method (method.ToString ());
-					}
-
-					//Gets all constructors of the current type
-					foreach (MethodDefinition method in type.Constructors) {
-						// We only want Public and Protected methods
-						if (!IsMethodVisible (method))
-							continue;
-
-						// If adding all methods, add this method
-						if (allMethods != null)
-							allMethods[method.ToString ()] = new Method (method.ToString ());
-
-						// If adding MonoTODO methods, check this method
-						if (monoTodoMethods != null)
-							foreach (CustomAttribute ca in method.CustomAttributes)
-								if (IsReportableMonoTODO (ca.Constructor.DeclaringType.ToString ()))
-									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
+									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorArguments.Count > 0 ? ca.ConstructorArguments[0].ToString ().Replace ('\n', ' ') : string.Empty);
 
 						// If adding methods that throw NotImplementedException, look for those
 						if (throwsNotImplementedMethods != null && ThrowsNotImplementedException (method))
@@ -135,7 +114,7 @@ namespace MoMA.Analyzer
 		
 		private static TypeDefinition TypeReferenceToDefinition (TypeReference type)
 		{
-			return type.Module.Types[type.FullName];
+			return type.Module.GetType(type.FullName);
 		}
 		
 		// Is this attribute a MonoTODO that we want to report in MoMA?
